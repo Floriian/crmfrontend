@@ -1,10 +1,10 @@
 import { z } from 'zod';
 export const SignInSchema = z.object({
-  username: z.string({
-    required_error: 'Username is required.',
+  username: z.string().min(1, {
+    message: 'Username is required.',
   }),
-  password: z.string({
-    required_error: 'Password is required.',
+  password: z.string().min(1, {
+    message: 'Password is required.',
   }),
 });
 
@@ -17,8 +17,17 @@ export const SignUpSchema = z
         required_error: 'Username is required.',
       })
       .min(5, {
-        message: 'Username must 5 or more characters long.',
+        message: 'Username must be 5 or more characters long.',
       }),
+
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .min(1, {
+        message: 'Email is required',
+      })
+      .email('Enter a valid email address.'),
 
     password: z
       .string({
