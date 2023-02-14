@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind utilities;
 @tailwind components;
+
+input[type='text'],
+input[type='password'] {
+  @apply rounded-full bg-slate-200 p-2 text-black outline-cyan-500 focus:outline-2;
+}
