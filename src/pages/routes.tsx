@@ -1,25 +1,17 @@
-import { type RouteObject, createBrowserRouter } from 'react-router-dom';
+import {
+  type RouteObject,
+  createBrowserRouter,
+  IndexRouteObject,
+  NonIndexRouteObject,
+} from 'react-router-dom';
 import SignIn from './auth/SignIn';
 import SignUp from './auth/SignUp';
+import Layout from '../components/Layout/Layout';
+import Home from './user/Home';
+import { userRouter } from './user/userRoutes';
+import { authRouter } from './auth/authRouter';
 
 //TODO add "title" property to children element.
-
-export type Route = RouteObject & {
-  title?: string;
-};
-export const guestRoutes: Route[] = [
-  {
-    path: '/auth/sign-in',
-    element: <SignIn />,
-    title: 'Sign in',
-  },
-  {
-    path: '/auth/sign-up',
-    element: <SignUp />,
-    title: 'Sign Up',
-  },
-];
-
-export const routes = [...guestRoutes];
+export const routes = [...userRouter, ...authRouter];
 
 export const browserRotuer = createBrowserRouter(routes);
