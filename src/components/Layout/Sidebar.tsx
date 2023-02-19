@@ -11,13 +11,16 @@ export default function Sidebar({ children }: SidebarProps) {
     <>
       <div className="flex">
         <div className="sticky top-0 h-screen w-56 bg-gray-200 text-black dark:bg-slate-900 dark:text-white">
+          <div className="w-full border-b-2 p-2">
+            <p className="text-center uppercase"> crm</p>
+          </div>
           <ul>
             {sideBarPages.map((r) => (
-              <SideBarLink path={r.path as To} title={r.title} />
+              <SideBarLink path={r.path as To} title={r.title} key={r.path} />
             ))}
           </ul>
         </div>
-        <div className="h-full w-full">{children}</div>
+        <div className="min-h-full w-full dark:bg-slate-700">{children}</div>
       </div>
     </>
   );

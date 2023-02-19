@@ -4,7 +4,7 @@ import { menuPages } from '../../pages/user/userRoutes';
 
 export function Menu() {
   return (
-    <nav className="flex justify-end bg-gray-100 text-black dark:bg-slate-900 dark:text-white">
+    <nav className="fixed flex w-full justify-end bg-gray-100 text-black dark:bg-slate-900 dark:text-white">
       {menuPages.map((r) => (
         <MenuLink key={r.path} path={r.path as To} title={r.title} />
       ))}

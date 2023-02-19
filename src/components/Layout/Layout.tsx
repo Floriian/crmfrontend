@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 function Layout() {
   return (
     <>
-      <Menu />
+      {/* <Menu /> */}
       <Sidebar>
         <Outlet />
       </Sidebar>
