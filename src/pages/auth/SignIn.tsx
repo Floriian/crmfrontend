@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignInSchema, TNestError, TSignIn } from '../../types';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/Form';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { axiosInstance, signIn } from '../../api';
 import { AxiosError } from 'axios';
 import { NotificationBox } from '../../components/Notification';
 function SignIn() {
   const [error, setError] = useState<TNestError>();
+
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams) {
+      setError({
+        error: searchParams.get('error'),
+        message: searchParams.get('message'),
+        statusCode: 401,
+      });
+    }
+  }, [searchParams]);
 
   const {
     handleSubmit,
@@ -30,14 +43,19 @@ function SignIn() {
         '/auth/sign-in',
         data,
       );
+
       if (response.data.access_token) {
         localStorage.setItem('access_token', response.data.access_token);
+        navigate('/');
       }
-      setError({
-        statusCode: 500,
-        error: 'Something went wrong...',
-        message: ['Something went wrong...'],
-      });
+
+      if (!response.data.access_token) {
+        setError({
+          statusCode: 500,
+          error: 'Something went wrong...',
+          message: ['Something went wrong...'],
+        });
+      }
     } catch (e) {
       if (e instanceof AxiosError) {
         const apiResponse: TNestError = e.response?.data;
@@ -62,7 +80,9 @@ function SignIn() {
         }}
       >
         <h2 className="text-center text-xl">Sign in</h2>
-        {error?.statusCode === 404 || error?.statusCode === 500 ? (
+        {error?.statusCode === 404 ||
+        error?.statusCode === 401 ||
+        error?.statusCode === 500 ? (
           <NotificationBox type="error">{error.message}</NotificationBox>
         ) : null}
         <form className="m-2" onSubmit={handleSubmit(onFormSubmit)}>
