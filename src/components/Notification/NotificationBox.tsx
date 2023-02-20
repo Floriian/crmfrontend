@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import classNames from 'classnames';
 import { IconAlert } from '../Icons';
@@ -8,6 +8,12 @@ type Props = {
 };
 
 export function NotificationBox({ type, children }: Props) {
+  const [end, setEnd] = useState<boolean>(false);
+
+  const onAnimationEnded = () => {
+    setEnd(!end);
+  };
+
   const notificationClass = classNames({
     'bg-red-300 text-red-900': type === 'error',
     'bg-orange-300 text-orange-900': type === 'alert',
@@ -23,23 +29,31 @@ export function NotificationBox({ type, children }: Props) {
       //   duration: 0.7,
       // }}
       initial={{
-        scale: 0,
+        width: 0,
       }}
       animate={{
-        scale: 1,
+        width: 'auto',
       }}
       transition={{
-        duration: 0.5,
+        duration: 1,
       }}
-      className={'flex rounded-xl ' + notificationClass}
+      onAnimationComplete={onAnimationEnded}
+      className={'flex h-16 rounded-xl ' + notificationClass}
     >
       <div className="flex min-h-fit min-w-fit items-center border-r-2 border-red-900">
         <IconAlert className="text-4xl" />
       </div>
-      <div className="ml-2">
-        <h3 className="text-lg font-bold first-letter:uppercase">{type}</h3>
-        {children}
-      </div>
+      {end ? (
+        <motion.div
+          className="ml-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <h3 className="text-lg font-bold first-letter:uppercase">{type}</h3>
+          {children}
+        </motion.div>
+      ) : null}
     </motion.div>
   );
 }
