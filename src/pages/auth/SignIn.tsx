@@ -88,7 +88,7 @@ function SignIn() {
         <form className="m-2" onSubmit={handleSubmit(onFormSubmit)}>
           <div className="mb-2">
             <label htmlFor="credential" className="block">
-              Credential
+              Username / Email
             </label>
             <input
               type="text"
