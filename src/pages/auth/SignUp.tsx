@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignUpSchema, TSignUp } from '../../types';
+import { SignUpSchema, TNestError, TSignUp } from '../../types';
 import classNames from 'classnames';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/Form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../../api';
+import { AxiosError } from 'axios';
+import { NotificationBox } from '../../components/Notification';
 function SignIn() {
+  const [error, setError] = useState<TNestError>();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     register,
@@ -19,8 +24,29 @@ function SignIn() {
     'border-2 border-red-500 ': errors?.password || errors?.username,
   });
 
-  const onFormSubmit: SubmitHandler<TSignUp> = (d) => {
-    console.log(d);
+  const onFormSubmit: SubmitHandler<TSignUp> = async (data) => {
+    try {
+      const response = await axiosInstance.post<{ access_token: string }>(
+        '/auth/sign-up',
+        data,
+      );
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+        navigate('/');
+      }
+      if (!response.data.access_token) {
+        setError({
+          statusCode: 500,
+          error: 'Something went wrong...',
+          message: ['Something went wrong...'],
+        });
+      }
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        const apiResponse: TNestError = e.response?.data;
+        setError(apiResponse);
+      }
+    }
   };
 
   return (
@@ -39,6 +65,9 @@ function SignIn() {
         }}
       >
         <h2 className="text-center text-xl">Sign up</h2>
+        {error ? (
+          <NotificationBox type="error">{error.message}</NotificationBox>
+        ) : null}
         <form className="m-2" onSubmit={handleSubmit(onFormSubmit)}>
           <div className="mb-2">
             <label htmlFor="username" className="text-text-lg block">
@@ -101,12 +130,12 @@ function SignIn() {
             )}
           </div>
           <div className="mb-2">
-            <label htmlFor="password" className="text-lgl block">
+            <label htmlFor="confirm" className="text-lgl block">
               Confirm password
             </label>
             <input
               type="password"
-              id="password"
+              id="confirm"
               {...register('confirm')}
               className={errorClass + 'w-full'}
             />
