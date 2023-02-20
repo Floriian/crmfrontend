@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SignInSchema, TSignIn } from '../../types';
+import { SignInSchema, TNestError, TSignIn } from '../../types';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/Form';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
+import { axiosInstance, signIn } from '../../api';
+import { AxiosError } from 'axios';
+import { NotificationBox } from '../../components/Notification';
 function SignIn() {
+  const [error, setError] = useState<TNestError>();
+
   const {
     handleSubmit,
     register,
@@ -16,11 +21,18 @@ function SignIn() {
   });
 
   const errorClass = classNames({
-    'border-2 border-red-500 ': errors?.password || errors?.username,
+    'border-2 border-red-500 ': errors?.password || errors?.credential,
   });
 
-  const onFormSubmit: SubmitHandler<TSignIn> = (d) => {
-    console.log(d);
+  const onFormSubmit: SubmitHandler<TSignIn> = async (data) => {
+    try {
+      const response = await axiosInstance.post('/auth/sign-in', data);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        const apiResponse: TNestError = e.response?.data;
+        setError(apiResponse);
+      }
+    }
   };
 
   return (
@@ -39,24 +51,27 @@ function SignIn() {
         }}
       >
         <h2 className="text-center text-xl">Sign in</h2>
+        {error?.statusCode === 404 || error?.statusCode === 500 ? (
+          <NotificationBox type="error">{error.message}</NotificationBox>
+        ) : null}
         <form className="m-2" onSubmit={handleSubmit(onFormSubmit)}>
           <div className="mb-2">
-            <label htmlFor="username" className="block">
-              Username
+            <label htmlFor="credential" className="block">
+              Credential
             </label>
             <input
               type="text"
-              id="username"
+              id="credential"
               className={errorClass + 'w-full'}
-              {...register('username')}
+              {...register('credential')}
             />
-            {errors?.username && (
+            {errors?.credential && (
               <motion.p
                 className="text-sm text-red-500"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                {errors?.username?.message}{' '}
+                {errors?.credential?.message}{' '}
               </motion.p>
             )}
           </div>
