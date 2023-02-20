@@ -26,7 +26,18 @@ function SignIn() {
 
   const onFormSubmit: SubmitHandler<TSignIn> = async (data) => {
     try {
-      const response = await axiosInstance.post('/auth/sign-in', data);
+      const response = await axiosInstance.post<{ access_token: string }>(
+        '/auth/sign-in',
+        data,
+      );
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+      }
+      setError({
+        statusCode: 500,
+        error: 'Something went wrong...',
+        message: ['Something went wrong...'],
+      });
     } catch (e) {
       if (e instanceof AxiosError) {
         const apiResponse: TNestError = e.response?.data;
