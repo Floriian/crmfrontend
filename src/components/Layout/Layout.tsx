@@ -12,7 +12,7 @@ function Layout() {
   const errMessage = 'You are not logged in!';
 
   useEffect(() => {
-    if (token) {
+    if (!token) {
       navigate(
         `/auth/sign-in?statusCode=401&message=${errMessage}&error=Unauthorized`,
       );
