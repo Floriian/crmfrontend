@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../../components/Form';
 import classNames from 'classnames';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { axiosInstance, signIn } from '../../api';
+import { axiosInstance, signIn } from '../../services';
 import { AxiosError } from 'axios';
 import { NotificationBox } from '../../components/Notification';
 function SignIn() {
@@ -80,10 +80,10 @@ function SignIn() {
         }}
       >
         <h2 className="text-center text-xl">Sign in</h2>
-        {error?.statusCode === 404 ||
-        error?.statusCode === 401 ||
-        error?.statusCode === 500 ? (
-          <NotificationBox type="error">{error.message}</NotificationBox>
+        {(error && error?.statusCode === 401) ||
+        error?.statusCode === 500 ||
+        error?.statusCode === 404 ? (
+          <NotificationBox type="error">{error?.message}</NotificationBox>
         ) : null}
         <form className="m-2" onSubmit={handleSubmit(onFormSubmit)}>
           <div className="mb-2">
