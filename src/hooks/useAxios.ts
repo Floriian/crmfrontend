@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios, { type AxiosResponse, AxiosError } from 'axios';
+import { type AxiosResponse, AxiosError } from 'axios';
+import { axiosInstance } from '../services';
 
 export function useAxios<T>(url: string) {
   const [response, setResponse] = useState<T>();
@@ -9,7 +10,7 @@ export function useAxios<T>(url: string) {
     setLoading(true);
     const fetch = async () => {
       try {
-        const res = await axios<T>(url);
+        const res = await axiosInstance<T>(url);
         setResponse(res.data);
         setLoading(false);
       } catch (e) {
