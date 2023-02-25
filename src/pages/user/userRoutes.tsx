@@ -1,6 +1,7 @@
 import { type Route } from '../../types';
 import Layout from '../../components/Layout/Layout';
 import Home from './Home';
+import { taskPages } from './tasks/taskRoutes';
 
 export const menuPages: Route[] = [
   {
@@ -21,6 +22,7 @@ export const sideBarPages: Route[] = [
     path: '/',
     element: <Home />,
   },
+  ...taskPages,
 ];
 
 export const userRouter: Route[] = [
