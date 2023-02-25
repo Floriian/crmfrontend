@@ -1,7 +1,6 @@
 import { TUser } from '../types';
 import { getAccessToken } from '../utils';
 import { authInstance } from './authInstance';
-import { axiosInstance } from './axiosInstance';
 
 const token = getAccessToken();
 
