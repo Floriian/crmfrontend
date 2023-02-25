@@ -18,7 +18,7 @@ export function Button({
   const buttonClass = classNames({
     'bg-red-500 hover:bg-red-700': variant === 'danger',
     'bg-orange-500 hover:bg-orange-800': variant === 'warning',
-    'bg-green-500 hover:bg-green-500': variant === 'confirm',
+    'bg-green-500 hover:bg-green-500 text-white': variant === 'confirm',
     'bg-cyan-500 hover:bg-cyan-500': variant === 'base',
     'bg-gray-500': disabled,
   });
